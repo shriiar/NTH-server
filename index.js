@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const app = express();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const port = process.env.PORT || 5000;
@@ -12,6 +13,22 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.user}:${process.env.password}@nth.s4qce.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'unauthorized access' });
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: 'Forbidden access' });
+        }
+        console.log('decoded', decoded);
+        req.decoded = decoded;
+        next();
+    })
+}
+
 async function run() {
     try {
         await client.connect();
@@ -19,7 +36,15 @@ async function run() {
         const studentsCollection = client.db('NTH').collection('Students');
         const subWAccCollection = client.db('NTH').collection('SubWAcc');
 
-        app.get('/subjects', async (req, res) => {
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.SECRET_ACCESS_TOKEN, {
+                expiresIn: '1d'
+            });
+            res.send({ accessToken });
+        })
+
+        app.get('/subjects', verifyJWT, async (req, res) => {
             const className = req.query.className;
             const batch = req.query.batch;
             const group = req.query.group;
@@ -30,7 +55,7 @@ async function run() {
             res.send(subjects);
         })
 
-        app.get('/subWAcc', async (req, res) => {
+        app.get('/subWAcc', verifyJWT, async (req, res) => {
             const className = req.query.className;
             const batch = req.query.batch;
             const group = req.query.group;
@@ -44,17 +69,28 @@ async function run() {
             res.send(subjectVids);
         })
 
-        app.get('/students', async (req, res) => {
+        app.get('/students', verifyJWT, async (req, res) => {
             const className = req.query.className;
             const batch = req.query.batch;
             const group = req.query.group;
-            console.log(className, batch, group);
-            const query = {
-                className: className, batch: batch, group: group
-            };
-            const cursor = studentsCollection.find(query);
-            const students = await cursor.toArray();
-            res.send(students);
+            const email = req.query.email;
+            console.log(className, batch, group, email);
+            if (email === undefined || email === '') {
+                const query = {
+                    className: className, batch: batch, group: group
+                };
+                const cursor = studentsCollection.find(query);
+                const students = await cursor.toArray();
+                res.send(students);
+            }
+            else {
+                const query = {
+                    email: email
+                };
+                const cursor = studentsCollection.find(query);
+                const students = await cursor.toArray();
+                res.send(students);
+            }
         })
 
         app.post('/students', async (req, res) => {

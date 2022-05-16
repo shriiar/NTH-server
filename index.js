@@ -36,6 +36,8 @@ async function run() {
         const studentsCollection = client.db('NTH').collection('Students');
         const subWAccCollection = client.db('NTH').collection('SubWAcc');
         const noticeCollection = client.db('NTH').collection('Notice');
+        const examsCollection = client.db('NTH').collection('Exams');
+        const resultsCollection = client.db('NTH').collection('Results');
 
         app.post('/login', async (req, res) => {
             const user = req.body;
@@ -105,10 +107,49 @@ async function run() {
             res.send(subjects);
         })
 
+        app.get('/exams', verifyJWT, async (req, res) => {
+            const className = req.query.className;
+            const batch = req.query.batch;
+            const group = req.query.group;
+            const date = req.query.date;
+            console.log(className, batch, group, date);
+            const query = { className: className, batch: batch, group: group, date: date };
+            const cursor = examsCollection.find(query);
+            const exam = await cursor.toArray();
+            res.send(exam);
+        })
+
+        app.get('/results', verifyJWT, async (req, res) => {
+            const className = req.query.className;
+            const batch = req.query.batch;
+            const group = req.query.group;
+            const email = req.query.email;
+            console.log(className, batch, group, email);
+            const query = { className: className, batch: batch, group: group, email: email };
+            const cursor = resultsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         app.get('/notice/admin', verifyJWT, async (req, res) => {
             const cursor = noticeCollection.find();
             const notice = await cursor.toArray();
             res.send(notice);
+        })
+
+        app.get('/students/admin', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
+            const query = {email: email}
+            const cursor = studentsCollection.find(query);
+            const student = await cursor.toArray();
+            res.send(student);
+        })
+
+        app.get('/exams/admin', verifyJWT, async (req, res) => {
+            const cursor = examsCollection.find();
+            const exams = await cursor.toArray();
+            res.send(exams);
         })
 
         app.get('/admin/:email', async (req, res) => {
@@ -117,26 +158,6 @@ async function run() {
             const isAdmin = user.role === 'admin';
             res.send({ admin: isAdmin })
         })
-
-        // app.put('/students/:id', async(req, res) =>{
-        //     const id = req.params.id;
-        //     const updatedUser = req.body;
-        //     const filter = {_id: ObjectId(id)};
-        //     const options = { upsert: true };
-        //     const updatedDoc = {
-        //         $set: {
-        //             name: updatedUser.name,
-        //             father: updatedUser.father,
-        //             mother: updatedUser.mother,
-        //             className: updatedUser.className,
-        //             batch: updatedUser.batch,
-        //             group: updatedUser.group,
-        //         }
-        //     };
-        //     const result = await studentsCollection.updateOne(filter, updatedDoc, options);
-        //     res.send(result);
-
-        // })
 
         app.put('/students/:email', async (req, res) => {
             const email = req.params.email;
@@ -202,6 +223,18 @@ async function run() {
             res.send(result);
         })
 
+        app.post('/results', async (req, res) => {
+            const result = req.body;
+            const resultSend = await resultsCollection.insertOne(result);
+            res.send(resultSend);
+        })
+
+        app.post('/exams', async (req, res) => {
+            const exams = req.body;
+            const result = await examsCollection.insertOne(exams);
+            res.send(result);
+        })
+
         app.delete('/notice', async (req, res) => {
             const className = req.query.className;
             const batch = req.query.batch;
@@ -209,6 +242,18 @@ async function run() {
             console.log(className, batch, group);
             const query = { className: className, batch: batch, group: group };
             const result = await noticeCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/exams', async (req, res) => {
+            const className = req.query.className;
+            const batch = req.query.batch;
+            const group = req.query.group;
+            const name = req.query.name;
+            const topic = req.query.topic;
+            console.log(className, batch, group, name, topic);
+            const query = { className: className, batch: batch, group: group, name: name, topic: topic };
+            const result = await examsCollection.deleteOne(query);
             res.send(result);
         })
 

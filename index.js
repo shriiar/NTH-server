@@ -121,12 +121,13 @@ async function run() {
         })
 
         app.get('/results', verifyJWT, async (req, res) => {
+            const subject = req.query.subject;
             const className = req.query.className;
             const batch = req.query.batch;
             const group = req.query.group;
             const email = req.query.email;
-            console.log(className, batch, group, email);
-            const query = { className: className, batch: batch, group: group, email: email };
+            console.log(className, batch, group, email, subject);
+            const query = { className: className, batch: batch, group: group, email: email, subjectCode: subject };
             const cursor = resultsCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
@@ -168,7 +169,7 @@ async function run() {
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
             const user = await studentsCollection.findOne({ email: email });
-            const isAdmin = user.role === 'admin';
+            const isAdmin = user?.role === 'admin';
             res.send({ admin: isAdmin })
         })
 
@@ -185,6 +186,7 @@ async function run() {
                     className: updatedUser.className,
                     batch: updatedUser.batch,
                     group: updatedUser.group,
+                    img: updatedUser.img
                 }
             };
             const result = await studentsCollection.updateOne(filter, updateDoc, options);

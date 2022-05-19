@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -51,7 +51,7 @@ async function run() {
             const className = req.query.className;
             const batch = req.query.batch;
             const group = req.query.group;
-            console.log(className, batch, group);
+            // console.log(className, batch, group);
             const query = { className: className, batch: batch, group: group };
             const cursor = subjectsCollection.find(query);
             const subjects = await cursor.toArray();
@@ -63,7 +63,7 @@ async function run() {
             const batch = req.query.batch;
             const group = req.query.group;
             const subject = req.query.subject;
-            console.log(className, batch, group);
+            console.log(className, batch, group, subject);
             const query = {
                 className: className, batch: batch, group: group, subjectCode: subject
             };
@@ -101,7 +101,7 @@ async function run() {
             const batch = req.query.batch;
             const group = req.query.group;
             const date = req.query.date;
-            console.log(className, batch, group, date);
+            // console.log(className, batch, group, date);
             const query = { className: className, batch: batch, group: group, date: date };
             const cursor = noticeCollection.find(query);
             const subjects = await cursor.toArray();
@@ -113,7 +113,7 @@ async function run() {
             const batch = req.query.batch;
             const group = req.query.group;
             const date = req.query.date;
-            console.log(className, batch, group, date);
+            // console.log(className, batch, group, date);
             const query = { className: className, batch: batch, group: group, date: date };
             const cursor = examsCollection.find(query);
             const exam = await cursor.toArray();
@@ -126,7 +126,7 @@ async function run() {
             const batch = req.query.batch;
             const group = req.query.group;
             const email = req.query.email;
-            console.log(className, batch, group, email, subject);
+            // console.log(className, batch, group, email, subject);
             const query = { className: className, batch: batch, group: group, email: email, subjectCode: subject };
             const cursor = resultsCollection.find(query);
             const result = await cursor.toArray();
@@ -141,7 +141,7 @@ async function run() {
 
         app.get('/students/admin', verifyJWT, async (req, res) => {
             const email = req.query.email;
-            console.log(email);
+            // console.log(email);
             const query = { email: email }
             const cursor = studentsCollection.find(query);
             const student = await cursor.toArray();
@@ -159,7 +159,7 @@ async function run() {
             const batch = req.query.batch;
             const group = req.query.group;
             const subject = req.query.subject;
-            console.log(className, batch, group, subject);
+            // console.log(className, batch, group, subject);
             const query = { className: className, batch: batch, group: group, subjectCode: subject };
             const cursor = resultsCollection.find(query);
             const result = await cursor.toArray();
@@ -254,7 +254,7 @@ async function run() {
             const className = req.query.className;
             const batch = req.query.batch;
             const group = req.query.group;
-            console.log(className, batch, group);
+            // console.log(className, batch, group);
             const query = { className: className, batch: batch, group: group };
             const result = await noticeCollection.deleteOne(query);
             res.send(result);
@@ -266,7 +266,7 @@ async function run() {
             const group = req.query.group;
             const name = req.query.name;
             const topic = req.query.topic;
-            console.log(className, batch, group, name, topic);
+            // console.log(className, batch, group, name, topic);
             const query = { className: className, batch: batch, group: group, name: name, topic: topic };
             const result = await examsCollection.deleteOne(query);
             res.send(result);
@@ -280,7 +280,7 @@ async function run() {
             const father = req.query.father;
             const mother = req.query.mother;
             const email = req.query.email
-            console.log(className, batch, group, name, father, mother, email);
+            // console.log(className, batch, group, name, father, mother, email);
             const query = { className: className, batch: batch, group: group, name: name, father: father, mother: mother, email: email };
             const result = await studentsCollection.deleteOne(query);
             res.send(result);
@@ -293,9 +293,15 @@ async function run() {
             const subject = req.query.subject;
             const topic = req.query.topic;
             const id = req.query.id
-            console.log(className, batch, group, subject, topic, id);
+            // console.log(className, batch, group, subject, topic, id);
             const query = { className: className, batch: batch, group: group, subject: subject, topic: topic };
             const result = await resultsCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.delete('/subWAcc', async (req, res) => {
+            const _id = req.query.id;
+            const result = await subWAccCollection.deleteOne({ "_id" : ObjectId(_id) });
             res.send(result);
         })
     }

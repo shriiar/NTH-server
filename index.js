@@ -186,7 +186,12 @@ async function run() {
                     className: updatedUser.className,
                     batch: updatedUser.batch,
                     group: updatedUser.group,
-                    img: updatedUser.img
+                    img: updatedUser.img,
+                    paid: updatedUser.paid,
+                    lastPaid: updatedUser.lastPaid,
+                    due: updatedUser.due,
+                    payMonth: updatedUser.payMonth,
+                    payYear: updatedUser.payYear
                 }
             };
             const result = await studentsCollection.updateOne(filter, updateDoc, options);
@@ -212,7 +217,7 @@ async function run() {
 
         app.post('/students', async (req, res) => {
             const student = req.body;
-            const query = { name: student.name, father: student.father, mother: student.mother, className: student.className, id: student.id, batch: student.batch, group: student.group };
+            const query = { name: student.name, father: student.father, mother: student.mother, className: student.className, id: student.id, batch: student.batch, group: student.group, paid: student.paid, lastPaid: student.lastPaid };
             const exists = await studentsCollection.findOne(query);
             if (exists) {
                 return res.send({ success: false, student: exists })
@@ -301,7 +306,7 @@ async function run() {
 
         app.delete('/subWAcc', async (req, res) => {
             const _id = req.query.id;
-            const result = await subWAccCollection.deleteOne({ "_id" : ObjectId(_id) });
+            const result = await subWAccCollection.deleteOne({ "_id": ObjectId(_id) });
             res.send(result);
         })
     }

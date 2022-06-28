@@ -133,6 +133,15 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/resultsOfAll', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            // console.log(className, batch, group, email, subject);
+            const query = { email: email };
+            const cursor = resultsCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
         app.get('/notice/admin', verifyJWT, async (req, res) => {
             const cursor = noticeCollection.find();
             const notice = await cursor.toArray();

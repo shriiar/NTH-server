@@ -216,9 +216,8 @@ async function run() {
 			const className = req.query.className;
 			const batch = req.query.batch;
 			const group = req.query.group;
-			const date = req.query.date;
-			// console.log(className, batch, group, date);
-			const query = { className: className, batch: batch, group: group, date: date };
+			// console.log(className, batch, group);
+			const query = { className: className, batch: batch, group: group };
 			const cursor = noticeCollection.find(query);
 			const subjects = await cursor.toArray();
 			res.send(subjects);

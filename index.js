@@ -226,9 +226,9 @@ async function run() {
 		app.get('/myNotice', verifyJWT, async (req, res) => {
 			const _id = req.query._id;
 			console.log(_id);
-			const notice = noticeCollection.find({ "_id": ObjectId(_id) });
-			const result = await cursor.toArray();
-			res.send(result);
+			const cursor = noticeCollection.find({ "_id": ObjectId(_id) });
+			const notice = await cursor.toArray();
+			res.send(notice);
 		})
 
 		app.get('/exams', verifyJWT, async (req, res) => {

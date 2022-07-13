@@ -223,6 +223,12 @@ async function run() {
 			res.send(subjects);
 		})
 
+		app.get('/myNotice', verifyJWT, async (req, res) => {
+			const _id = req.query._id;
+			const result = await noticeCollection.find({ "_id": ObjectId(_id) });
+			res.send(result);
+		})
+
 		app.get('/exams', verifyJWT, async (req, res) => {
 			const className = req.query.className;
 			const batch = req.query.batch;

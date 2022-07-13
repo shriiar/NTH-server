@@ -138,7 +138,7 @@ function verifyJWT(req, res, next) {
 		if (err) {
 			return res.status(403).send({ message: 'Forbidden access' });
 		}
-		console.log('decoded', decoded);
+		// console.log('decoded', decoded);
 		req.decoded = decoded;
 		next();
 	})
@@ -153,6 +153,7 @@ async function run() {
 		const noticeCollection = client.db('NTH').collection('Notice');
 		const examsCollection = client.db('NTH').collection('Exams');
 		const resultsCollection = client.db('NTH').collection('Results');
+		const ImgCollection = client.db('NTH').collection('SubImg');
 
 		app.post('/login', async (req, res) => {
 			const user = req.body;
@@ -178,7 +179,7 @@ async function run() {
 			const batch = req.query.batch;
 			const group = req.query.group;
 			const subject = req.query.subject;
-			console.log(className, batch, group, subject);
+			// console.log(className, batch, group, subject);
 			const query = {
 				className: className, batch: batch, group: group, subjectCode: subject
 			};
@@ -192,7 +193,7 @@ async function run() {
 			const batch = req.query.batch;
 			const group = req.query.group;
 			const email = req.query.email;
-			console.log(className, batch, group, email);
+			// console.log(className, batch, group, email);
 			if (email === undefined || email === '') {
 				const query = {
 					className: className, batch: batch, group: group
@@ -228,7 +229,7 @@ async function run() {
 			const batch = req.query.batch;
 			const group = req.query.group;
 			const date = req.query.date;
-			// console.log(className, batch, group, date);
+			console.log(className, batch, group, date);
 			const query = { className: className, batch: batch, group: group, date: date };
 			const cursor = examsCollection.find(query);
 			const exam = await cursor.toArray();
@@ -295,6 +296,13 @@ async function run() {
 			const user = await studentsCollection.findOne({ email: email });
 			const isAdmin = user?.role === 'admin';
 			res.send({ admin: isAdmin })
+		})
+
+		app.get('/subimg', verifyJWT, async (req, res) => {
+			const query = {};
+			const cursor = ImgCollection.find(query);
+			const result = await cursor.toArray();
+			res.send(result);
 		})
 
 		app.put('/students/:email', async (req, res) => {

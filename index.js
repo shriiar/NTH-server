@@ -192,24 +192,24 @@ async function run() {
 			const className = req.query.className;
 			const batch = req.query.batch;
 			const group = req.query.group;
+			// console.log(className, batch, group);
+			const query = {
+				className: className, batch: batch, group: group
+			};
+			const cursor = studentsCollection.find(query);
+			const students = await cursor.toArray();
+			res.send(students);
+		})
+
+		app.get('/studentDue', verifyJWT, async (req, res) => {
 			const email = req.query.email;
-			// console.log(className, batch, group, email);
-			if (email === undefined || email === '') {
-				const query = {
-					className: className, batch: batch, group: group
-				};
-				const cursor = studentsCollection.find(query);
-				const students = await cursor.toArray();
-				res.send(students);
-			}
-			else {
-				const query = {
-					email: email
-				};
-				const cursor = studentsCollection.find(query);
-				const students = await cursor.toArray();
-				res.send(students);
-			}
+			// console.log(email);
+			const query = {
+				email: email
+			};
+			const cursor = studentsCollection.find(query);
+			const students = await cursor.toArray();
+			res.send(students);
 		})
 
 		app.get('/notice', verifyJWT, async (req, res) => {

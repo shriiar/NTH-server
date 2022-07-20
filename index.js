@@ -149,6 +149,7 @@ async function run() {
 		await client.connect();
 		const subjectsCollection = client.db('NTH').collection('Subjects');
 		const studentsCollection = client.db('NTH').collection('Students');
+		const studentIDCollection = client.db('NTH').collection('StudentID');
 		const subWAccCollection = client.db('NTH').collection('SubWAcc');
 		const noticeCollection = client.db('NTH').collection('Notice');
 		const examsCollection = client.db('NTH').collection('Exams');
@@ -335,6 +336,18 @@ async function run() {
 			};
 			const result = await studentsCollection.updateOne(filter, updateDoc, options);
 			res.send(result);
+		})
+
+		app.put('/studentID', async (req, res) => {
+			const nameID = req.body;
+			const query = { nameID: nameID.nameID };
+			const exists = await studentIDCollection.findOne(query);
+			console.log(nameID, exists);
+			if (exists) {
+				return res.send({ success: false, nameID: exists })
+			}
+			const result = await studentIDCollection.insertOne(nameID);
+			res.send({ success: true, result });
 		})
 
 		app.put('/students/admin/:email', verifyJWT, async (req, res) => {

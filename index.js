@@ -462,24 +462,14 @@ async function run() {
 		})
 
 		app.delete('/notice', async (req, res) => {
-			const className = req.query.className;
-			const batch = req.query.batch;
-			const group = req.query.group;
-			// console.log(className, batch, group);
-			const query = { className: className, batch: batch, group: group };
-			const result = await noticeCollection.deleteOne(query);
+			const _id = req.query.id;
+			const result = await noticeCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 
 		app.delete('/exams', async (req, res) => {
-			const className = req.query.className;
-			const batch = req.query.batch;
-			const group = req.query.group;
-			const name = req.query.name;
-			const topic = req.query.topic;
-			// console.log(className, batch, group, name, topic);
-			const query = { className: className, batch: batch, group: group, name: name, topic: topic };
-			const result = await examsCollection.deleteOne(query);
+			const _id = req.query.id;
+			const result = await examsCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 

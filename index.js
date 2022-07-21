@@ -498,15 +498,9 @@ async function run() {
 		})
 
 		app.delete('/results', async (req, res) => {
-			const className = req.query.className;
-			const batch = req.query.batch;
-			const group = req.query.group;
-			const subject = req.query.subject;
-			const topic = req.query.topic;
-			const id = req.query.id
-			// console.log(className, batch, group, subject, topic, id);
-			const query = { className: className, batch: batch, group: group, subject: subject, topic: topic };
-			const result = await resultsCollection.deleteOne(query);
+			const _id = req.query.id;
+			console.log(_id);
+			const result = await resultsCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 

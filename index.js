@@ -350,12 +350,6 @@ async function run() {
 			res.send({ success: true, result });
 		})
 
-		app.put('/results', async (req, res) => {
-			const result = req.body;
-			const resultSend = await resultsCollection.insertOne(result);
-			res.send(resultSend);
-		})
-
 		app.put('/students/admin/:email', verifyJWT, async (req, res) => {
 			const email = req.params.email;
 			const requester = req.decoded.email;
@@ -399,6 +393,12 @@ async function run() {
 			const notice = req.body;
 			const result = await noticeCollection.insertOne(notice);
 			res.send(result);
+		})
+
+		app.post('/results', async (req, res) => {
+			const result = req.body;
+			const resultSend = await resultsCollection.insertOne(result);
+			res.send(resultSend);
 		})
 
 		app.post('/exams', async (req, res) => {

@@ -313,6 +313,14 @@ async function run() {
 			res.send(result);
 		})
 
+		app.get('/updateResult/:_id', verifyJWT, async (req, res) => {
+			const _id = req.params._id;
+			// console.log("_id", _id);
+			const cursor = resultsCollection.find({ "_id": ObjectId(_id) });
+			const result = await cursor.toArray();
+			res.send(result);
+		})
+
 		app.put('/students/:email', async (req, res) => {
 			const email = req.params.email;
 			const updatedUser = req.body;
@@ -335,6 +343,52 @@ async function run() {
 				}
 			};
 			const result = await studentsCollection.updateOne(filter, updateDoc, options);
+			res.send(result);
+		})
+
+		app.put('/updateResult/:_id', async (req, res) => {
+			const _id = req.params._id;
+			console.log("_id", _id);
+			const updatedResult = req.body;
+			const filter = { _id: ObjectId(_id) };
+			console.log(filter);
+			const options = { upsert: true };
+			const updateDoc = {
+				$set: {
+					name: updatedResult.name,
+					mark: updatedResult.mark,
+					batch: updatedResult.batch,
+					className: updatedResult.className,
+					date: updatedResult.date,
+					email: updatedResult.email,
+					fmark: updatedResult.fmark,
+					group: updatedResult.group,
+					highest: updatedResult.highest,
+					subject: updatedResult.subject,
+					subjectCode: updatedResult.subjectCode,
+					topic: updatedResult.topic
+				}
+			};
+			const result = await resultsCollection.updateOne(filter, updateDoc, options);
+			res.send(result);
+		})
+
+		app.put('/updateHighest', async (req, res) => {
+			const className = req.query.className;
+			const batch = req.query.batch;
+			const group = req.query.group;
+			const subjectCode = req.query.subjectCode;
+			const date = req.query.date;
+			const updatedHighest = req.body;
+			const filter = { className: className, batch: batch, group: group, subjectCode: subjectCode, date: date };
+			console.log(filter);
+			const options = { upsert: true };
+			const updateDoc = {
+				$set: {
+					highest: updatedHighest.highest,
+				}
+			};
+			const result = await resultsCollection.updateMany(filter, updateDoc, options);
 			res.send(result);
 		})
 

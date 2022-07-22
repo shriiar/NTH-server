@@ -366,7 +366,8 @@ async function run() {
 					highest: updatedResult.highest,
 					subject: updatedResult.subject,
 					subjectCode: updatedResult.subjectCode,
-					topic: updatedResult.topic
+					topic: updatedResult.topic,
+					attendance: updatedResult.attendance
 				}
 			};
 			const result = await resultsCollection.updateOne(filter, updateDoc, options);

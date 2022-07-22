@@ -155,6 +155,7 @@ async function run() {
 		const examsCollection = client.db('NTH').collection('Exams');
 		const resultsCollection = client.db('NTH').collection('Results');
 		const ImgCollection = client.db('NTH').collection('SubImg');
+		const HomeImgCollection = client.db('NTH').collection('HomeImg');
 
 		app.post('/login', async (req, res) => {
 			const user = req.body;
@@ -327,6 +328,12 @@ async function run() {
 			res.send(result);
 		})
 
+		app.get('/images', verifyJWT, async (req, res) => {
+			const cursor = HomeImgCollection.find({});
+			const result = await cursor.toArray();
+			res.send(result);
+		})
+
 		app.put('/students/:email', async (req, res) => {
 			const email = req.params.email;
 			const updatedUser = req.body;
@@ -462,6 +469,12 @@ async function run() {
 			res.send(resultSend);
 		})
 
+		app.post('/images', async (req, res) => {
+			const img = req.body;
+			const result = await HomeImgCollection.insertOne(img);
+			res.send(result);
+		})
+
 		app.post('/exams', async (req, res) => {
 			const exams = req.body;
 			const result = await examsCollection.insertOne(exams);
@@ -511,6 +524,13 @@ async function run() {
 			const _id = req.query.id;
 			console.log(_id);
 			const result = await studentIDCollection.deleteOne({ "_id": ObjectId(_id) });
+			res.send(result);
+		})
+
+		app.delete('/images', async (req, res) => {
+			const _id = req.query.id;
+			console.log(_id);
+			const result = await HomeImgCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 

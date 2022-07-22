@@ -328,7 +328,7 @@ async function run() {
 			res.send(result);
 		})
 
-		app.get('/images', verifyJWT, async (req, res) => {
+		app.get('/images', async (req, res) => {
 			const cursor = HomeImgCollection.find({});
 			const result = await cursor.toArray();
 			res.send(result);

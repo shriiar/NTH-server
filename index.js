@@ -321,6 +321,12 @@ async function run() {
 			res.send(result);
 		})
 
+		app.get('/studentID', verifyJWT, async (req, res) => {
+			const cursor = studentIDCollection.find({});
+			const result = await cursor.toArray();
+			res.send(result);
+		})
+
 		app.put('/students/:email', async (req, res) => {
 			const email = req.params.email;
 			const updatedUser = req.body;
@@ -498,6 +504,13 @@ async function run() {
 		app.delete('/subWAcc', async (req, res) => {
 			const _id = req.query.id;
 			const result = await subWAccCollection.deleteOne({ "_id": ObjectId(_id) });
+			res.send(result);
+		})
+
+		app.delete('/studentID', async (req, res) => {
+			const _id = req.query.id;
+			console.log(_id);
+			const result = await studentIDCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 

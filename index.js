@@ -156,6 +156,7 @@ async function run() {
 		const resultsCollection = client.db('NTH').collection('Results');
 		const ImgCollection = client.db('NTH').collection('SubImg');
 		const HomeImgCollection = client.db('NTH').collection('HomeImg');
+		const PinnedPostsCollection = client.db('NTH').collection('PinnedPost');
 
 		app.post('/login', async (req, res) => {
 			const user = req.body;
@@ -334,6 +335,12 @@ async function run() {
 			res.send(result);
 		})
 
+		app.get('/pinnedPosts', async (req, res) => {
+			const cursor = PinnedPostsCollection.find({});
+			const result = await cursor.toArray();
+			res.send(result);
+		})
+
 		app.put('/students/:email', async (req, res) => {
 			const email = req.params.email;
 			const updatedUser = req.body;
@@ -481,6 +488,12 @@ async function run() {
 			res.send(result);
 		})
 
+		app.post('/pinnedPosts', async (req, res) => {
+			const post = req.body;
+			const result = await PinnedPostsCollection.insertOne(post);
+			res.send(result);
+		})
+
 		app.delete('/notice', async (req, res) => {
 			const _id = req.query.id;
 			const result = await noticeCollection.deleteOne({ "_id": ObjectId(_id) });
@@ -531,6 +544,13 @@ async function run() {
 			const _id = req.query.id;
 			console.log(_id);
 			const result = await HomeImgCollection.deleteOne({ "_id": ObjectId(_id) });
+			res.send(result);
+		})
+
+		app.delete('/pinnedPosts', async (req, res) => {
+			const _id = req.query.id;
+			console.log(_id);
+			const result = await PinnedPostsCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 

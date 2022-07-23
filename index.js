@@ -329,8 +329,15 @@ async function run() {
 			res.send(result);
 		})
 
+		app.get('/studentUserID', async (req, res) => {
+			const _id = req.query.id;
+			const cursor = studentIDCollection.find({});
+			const result = await cursor.toArray();
+			res.send(result);
+		})
+
 		app.get('/images', async (req, res) => {
-			const cursor = HomeImgCollection.find({});
+			const cursor = studentIDCollection.find({ "_id": ObjectId(_id) });
 			const result = await cursor.toArray();
 			res.send(result);
 		})

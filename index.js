@@ -323,7 +323,7 @@ async function run() {
 			res.send(result);
 		})
 
-		app.get('/studentID', verifyJWT, async (req, res) => {
+		app.get('/studentID', async (req, res) => {
 			const cursor = studentIDCollection.find({});
 			const result = await cursor.toArray();
 			res.send(result);

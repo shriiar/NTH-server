@@ -332,7 +332,7 @@ async function run() {
 		app.get('/studentUserID', async (req, res) => {
 			const userId = req.query.userId;
 			console.log(userId);
-			const cursor = studentIDCollection.findOne({ nameID: userId });
+			const cursor = studentIDCollection.find({ nameID: userId });
 			const result = await cursor.toArray();
 			res.send(result);
 		})

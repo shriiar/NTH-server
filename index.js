@@ -343,6 +343,14 @@ async function run() {
 			res.send(result);
 		})
 
+		app.get('/regStudentID', async (req, res) => {
+			const userId = req.query.userId;
+			console.log(userId);
+			const cursor = studentsCollection.find({ userId: userId});
+			const result = await cursor.toArray();
+			res.send(result);
+		})
+
 		app.get('/pinnedPosts', async (req, res) => {
 			const cursor = PinnedPostsCollection.find({});
 			const result = await cursor.toArray();

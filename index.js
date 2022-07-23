@@ -330,7 +330,7 @@ async function run() {
 		})
 
 		app.get('/studentUserID', async (req, res) => {
-			const id = req.query.id;
+			const _id = req.query.id;
 			const cursor = studentIDCollection.find({ "_id": ObjectId(_id) });
 			const result = await cursor.toArray();
 			res.send(result);

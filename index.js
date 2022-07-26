@@ -367,6 +367,8 @@ async function run() {
 					name: updatedUser.name,
 					father: updatedUser.father,
 					mother: updatedUser.mother,
+					phone: updatedUser.phone,
+					adress: updatedUser.adress,
 					className: updatedUser.className,
 					batch: updatedUser.batch,
 					group: updatedUser.group,

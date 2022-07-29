@@ -196,7 +196,7 @@ async function run() {
 			const batch = req.query.batch;
 			const group = req.query.group;
 			const email = req.query.email;
-			console.log(className, batch, group, email);
+			// console.log(className, batch, group, email);
 			if (email === undefined || email === '') {
 				const query = {
 					className: className, batch: batch, group: group
@@ -228,7 +228,7 @@ async function run() {
 
 		app.get('/myNotice', verifyJWT, async (req, res) => {
 			const _id = req.query._id;
-			console.log(_id);
+			// console.log(_id);
 			const cursor = noticeCollection.find({ "_id": ObjectId(_id) });
 			const notice = await cursor.toArray();
 			res.send(notice);
@@ -239,7 +239,7 @@ async function run() {
 			const batch = req.query.batch;
 			const group = req.query.group;
 			const date = req.query.date;
-			console.log(className, batch, group, date);
+			// console.log(className, batch, group, date);
 			const query = { className: className, batch: batch, group: group, date: date };
 			const cursor = examsCollection.find(query);
 			const exam = await cursor.toArray();
@@ -331,7 +331,7 @@ async function run() {
 
 		app.get('/studentUserID', async (req, res) => {
 			const userId = req.query.userId;
-			console.log(userId);
+			// console.log(userId);
 			const cursor = studentIDCollection.find({ nameID: userId });
 			const result = await cursor.toArray();
 			res.send(result);
@@ -345,8 +345,8 @@ async function run() {
 
 		app.get('/regStudentID', async (req, res) => {
 			const userId = req.query.userId;
-			console.log(userId);
-			const cursor = studentsCollection.find({ userId: userId});
+			// console.log(userId);
+			const cursor = studentsCollection.find({ userId: userId });
 			const result = await cursor.toArray();
 			res.send(result);
 		})
@@ -380,17 +380,17 @@ async function run() {
 					payYear: updatedUser.payYear
 				}
 			};
-			console.log(updateDoc);
+			// console.log(updateDoc);
 			const result = await studentsCollection.updateOne(filter, updateDoc, options);
 			res.send(result);
 		})
 
 		app.put('/updateResult/:_id', async (req, res) => {
 			const _id = req.params._id;
-			console.log("_id", _id);
+			// console.log("_id", _id);
 			const updatedResult = req.body;
 			const filter = { _id: ObjectId(_id) };
-			console.log(filter);
+			// console.log(filter);
 			const options = { upsert: true };
 			const updateDoc = {
 				$set: {
@@ -421,7 +421,7 @@ async function run() {
 			const date = req.query.date;
 			const updatedHighest = req.body;
 			const filter = { className: className, batch: batch, group: group, subjectCode: subjectCode, date: date };
-			console.log(filter);
+			// console.log(filter);
 			const options = { upsert: true };
 			const updateDoc = {
 				$set: {
@@ -436,7 +436,7 @@ async function run() {
 			const nameID = req.body;
 			const query = { nameID: nameID.nameID };
 			const exists = await studentIDCollection.findOne(query);
-			console.log(nameID, exists);
+			// console.log(nameID, exists);
 			if (exists) {
 				return res.send({ success: false, nameID: exists })
 			}
@@ -525,30 +525,30 @@ async function run() {
 			res.send(result);
 		})
 
-		app.delete('/students', async (req, res) => {
-			const className = req.query.className;
-			const batch = req.query.batch;
-			const group = req.query.group;
-			const name = req.query.name;
-			const father = req.query.father;
-			const mother = req.query.mother;
-			const email = req.query.email
-			// console.log(className, batch, group, name, father, mother, email);
-			const query = { className: className, batch: batch, group: group, name: name, father: father, mother: mother, email: email };
-			const result = await studentsCollection.deleteOne(query);
+		app.delete('/subWAcc', async (req, res) => {
+			const _id = req.query.id;
+			const result = await subWAccCollection.deleteOne({ "_id": ObjectId(_id) });
+			res.send(result);
+		})
+
+		app.delete('/images', async (req, res) => {
+			const _id = req.query.id;
+			// console.log(_id);
+			const result = await HomeImgCollection.deleteOne({ "_id": ObjectId(_id) });
+			res.send(result);
+		})
+
+		app.delete('/pinnedPosts', async (req, res) => {
+			const _id = req.query.id;
+			// console.log(_id);
+			const result = await PinnedPostsCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 
 		app.delete('/results', async (req, res) => {
 			const _id = req.query.id;
-			console.log(_id);
+			// console.log(_id);
 			const result = await resultsCollection.deleteOne({ "_id": ObjectId(_id) });
-			res.send(result);
-		})
-
-		app.delete('/subWAcc', async (req, res) => {
-			const _id = req.query.id;
-			const result = await subWAccCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 
@@ -559,17 +559,25 @@ async function run() {
 			res.send(result);
 		})
 
-		app.delete('/images', async (req, res) => {
+		app.delete('/students', async (req, res) => {
 			const _id = req.query.id;
-			console.log(_id);
-			const result = await HomeImgCollection.deleteOne({ "_id": ObjectId(_id) });
+			// console.log("students", _id);
+			const result = await studentsCollection.deleteOne({ "_id": ObjectId(_id) });
 			res.send(result);
 		})
 
-		app.delete('/pinnedPosts', async (req, res) => {
-			const _id = req.query.id;
-			console.log(_id);
-			const result = await PinnedPostsCollection.deleteOne({ "_id": ObjectId(_id) });
+		app.delete('/resultsEmail', async (req, res) => {
+			const email = req.query.email;
+			// console.log(email);
+			const result = await resultsCollection.deleteMany({email: email});
+			res.send(result);
+		})
+
+		app.delete('/nameID', async (req, res) => {
+			// console.log('OK');
+			const nameID = req.query.nameID;
+			// console.log("nameID", nameID);
+			const result = await studentIDCollection.deleteOne({nameID: nameID});
 			res.send(result);
 		})
 
